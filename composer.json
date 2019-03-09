@@ -1,0 +1,24 @@
+{
+    "name": "eddmash/permission-bundle",
+    "description": "Permission and roles bundle",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Eddilbert Macharia",
+            "email": "edd.cowan@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": { "Eddmash\\PermissionBundle\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Eddmash\\PermissionBundle\\Tests\\": "tests/" }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
