@@ -30,8 +30,12 @@
             <argument type="service" id="doctrine"/>
         </service>
         <service id="Eddmash\PermissionBundle\EventListener\DynamicRelationSubscriber">
-            <tag name="doctrine.event_listener" event="loadClassMetadata" />
+            <tag name="doctrine.event_listener" event="loadClassMetadata"/>
             <argument type="string" id="user_entity"/>
+        </service>
+        <service id="App\Security\PermissionVoter">
+            <tag name="security.voter"/>
+            <argument type="service" id="Eddmash\PermissionBundle\Repository\AuthPermissionRepository"/>
         </service>
     </services>
 </container>

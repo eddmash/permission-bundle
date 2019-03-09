@@ -53,8 +53,6 @@ class DynamicRelationSubscriber implements EventSubscriber
             ->getConfiguration()
             ->getNamingStrategy();
 
-        dump("--- evernt");
-        dump($this->userEntity);
         if (!$this->userEntity) {
             return;
         }
