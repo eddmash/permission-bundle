@@ -33,7 +33,7 @@
             <tag name="doctrine.event_listener" event="loadClassMetadata"/>
             <argument type="string" id="user_entity"/>
         </service>
-        <service id="App\Security\PermissionVoter">
+        <service id="Eddmash\PermissionBundle\Security\PermissionVoter">
             <tag name="security.voter"/>
             <argument type="service" id="Eddmash\PermissionBundle\Repository\AuthPermissionRepository"/>
         </service>
