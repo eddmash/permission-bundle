@@ -19,8 +19,8 @@
             <argument type="service" id="annotations.reader"/>
             <argument type="string" id="user_entity"/>
             <argument type="string" id="fetch_admin_callback"/>
-
         </service>
+
         <service id="Eddmash\PermissionBundle\Repository\AuthRoleRepository">
             <tag name="doctrine.repository_service"/>
             <argument type="service" id="doctrine"/>
@@ -36,6 +36,7 @@
         <service id="Eddmash\PermissionBundle\Security\PermissionVoter">
             <tag name="security.voter"/>
             <argument type="service" id="Eddmash\PermissionBundle\Repository\AuthPermissionRepository"/>
+            <argument type="string" id="user_class"/>
         </service>
     </services>
 </container>

@@ -43,5 +43,7 @@ class EddmashPermissionExtension extends Extension
         $definition->setArgument(3, $config['fetch_admin_callback']);
         $definition = $container->getDefinition('Eddmash\PermissionBundle\EventListener\DynamicRelationSubscriber');
         $definition->setArgument(0, $config['user_entity']);
+        $definition = $container->getDefinition('Eddmash\PermissionBundle\Security\PermissionVoter');
+        $definition->setArgument(1, $config['user_entity']);
     }
 }

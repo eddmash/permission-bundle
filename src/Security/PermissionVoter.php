@@ -13,7 +13,6 @@
 namespace Eddmash\PermissionBundle\Security;
 
 
-use App\Entity\User;
 use Eddmash\PermissionBundle\Entity\AuthPermission;
 use Eddmash\PermissionBundle\Repository\AuthPermissionRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -27,11 +26,17 @@ class PermissionVoter extends Voter
      * @author Eddilber Macharia (edd.cowan@gmail.com)<eddmash.com>
      */
     private $permissionRepository;
+    /**
+     * @var string
+     */
+    private $userClass;
 
-    public function __construct(AuthPermissionRepository $permissionRepository)
+    public function __construct(AuthPermissionRepository $permissionRepository,
+                                string $userClass)
     {
 
         $this->permissionRepository = $permissionRepository;
+        $this->userClass = $userClass;
     }
 
 
@@ -71,10 +76,11 @@ class PermissionVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         $user = $token->getUser();
-        if (!$user instanceof User) {
+        if (!$user instanceof $this->userClass) {
             // the user must be logged in; if not, deny access
             return false;
         }
+
 
         // clear previous one
         if (!array_key_exists($user->getId(), static::$perms)) {
@@ -91,6 +97,7 @@ class PermissionVoter extends Voter
 
             static::$perms[$user->getId()] = $perms ?? [];
         }
+        dump($user->getId(), static::$perms);
 
         return in_array($attribute, static::$perms[$user->getId()]);
 

@@ -41,10 +41,21 @@ class Permissions
 
     public function load(EntityManagerInterface $manager, AnnotationReader $annotationReader)
     {
+        $repo = $manager->getRepository($this->userEntity);
+        $adminuser = null;
+        $fetchAdminCallback = $this->fetchAdminCallback;
+        if (method_exists($repo, $fetchAdminCallback)) {
+            $adminuser = call_user_func([$repo, $fetchAdminCallback]);
+        }
+
+        if (empty($adminuser)) {
+            return;
+        }
+
         $this->write("setting up permissions");
         $rootRole = $manager->getRepository(AuthRole::class)
             ->findOneBy(array("name" => AuthRole::ROLE_ROOT));
-        if (!$rootRole){
+        if (!$rootRole) {
             $rootRole = new AuthRole();
             $rootRole->setName(AuthRole::ROLE_ROOT);
             $manager->persist($rootRole);
@@ -86,15 +97,8 @@ class Permissions
             }
         }
 
-        $repo = $manager->getRepository($this->userEntity);
-
-        $fetchAdminCallback = $this->fetchAdminCallback;
-        if (method_exists($repo, $fetchAdminCallback)) {
-            $edd = call_user_func([$repo, $fetchAdminCallback]);
-            $rootRole->addUser($edd);
-            $manager->persist($edd);
-        }
-
+        $rootRole->addUser($adminuser);
+        $manager->persist($adminuser);
         $manager->persist($rootRole);
         $manager->flush();
 
