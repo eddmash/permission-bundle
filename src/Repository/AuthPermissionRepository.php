@@ -4,9 +4,9 @@ namespace Eddmash\PermissionBundle\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use Eddmash\PermissionBundle\Entity\AuthPermission;
 use Eddmash\PermissionBundle\Entity\AuthRole;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @method AuthPermission|null find($id, $lockMode = null, $lockVersion = null)
@@ -16,7 +16,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class AuthPermissionRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AuthPermission::class);
     }
@@ -39,7 +39,8 @@ class AuthPermissionRepository extends ServiceEntityRepository
 
     public function findAllBuilder(): QueryBuilder
     {
-        return $this->createQueryBuilder('auth_permission')->orderBy('auth_permission.id');
+        return $this->createQueryBuilder('auth_permission')
+            ->orderBy('auth_permission.id');
     }
 
     public function findAllBuilderByRole(AuthRole $role): QueryBuilder

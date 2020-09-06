@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Eddmash\PermissionBundle\Entity\Annotations\AccessRights;
 
+use Gedmo\Mapping\Annotation as Gedmo;
 /**
  * @AccessRights(label="Assign Group", tag="groups")
  * @ORM\Entity(repositoryClass="Eddmash\PermissionBundle\Repository\AuthRoleRepository")
@@ -39,6 +40,13 @@ class AuthRole
      */
     private $permissions;
 
+    /**
+     * @var string
+     *
+     * @Gedmo\Slug(fields={"name"})
+     * @ORM\Column(length=128, unique=true)
+     */
+    private $slug;
 
     public function __construct()
     {
@@ -93,7 +101,7 @@ class AuthRole
 
     public function __toString()
     {
-        return $this->getSimpleName();
+        return $this->getName();
     }
 
     public function getSimpleName(): string
@@ -128,4 +136,22 @@ class AuthRole
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getSlug(): string
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param string $slug
+     */
+    public function setSlug(string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+
 }

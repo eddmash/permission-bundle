@@ -10,10 +10,17 @@ namespace Eddmash\PermissionBundle\Command;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Eddmash\PermissionBundle\Entity\Annotations\AccessRights;
 use Eddmash\PermissionBundle\Entity\AuthPermission;
 use Eddmash\PermissionBundle\Entity\AuthRole;
+use Gedmo\Tree\RepositoryInterface;
+use mysql_xdevapi\Exception;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 class Permissions
 {
@@ -30,17 +37,33 @@ class Permissions
      * @var string
      */
     private $fetchAdminCallback;
+    private $input;
+    /**
+     * @var string
+     *
+     *
+     * @author Eddilbert Macharia (http://eddmash.com) <edd.cowan@gmail.com>
+     */
+    private $username;
 
-    public function __construct(?OutputInterface $output = null,
-                                string $userEntity, string $fetchAdminCallback)
+    public function __construct(string $userEntity,
+                                string $fetchAdminCallback,
+                                string $username,
+                                ?InputInterface $input,
+                                ?OutputInterface $output = null)
     {
         $this->output = $output;
         $this->userEntity = $userEntity;
         $this->fetchAdminCallback = $fetchAdminCallback;
+        $this->input = $input;
+        $this->username = $username;
     }
 
     public function load(EntityManagerInterface $manager, AnnotationReader $annotationReader)
     {
+        /**
+         * @var $repo EntityRepository
+         */
         $repo = $manager->getRepository($this->userEntity);
         $adminuser = null;
         $fetchAdminCallback = $this->fetchAdminCallback;
@@ -48,8 +71,30 @@ class Permissions
             $adminuser = call_user_func([$repo, $fetchAdminCallback]);
         }
 
+
+        if (empty($adminuser) && !empty($this->username)) {
+
+            $adminuserQ = $repo->createQueryBuilder('u')
+                ->select("u")
+                ->where("u.username = :username")
+                ->setParameter("username", $this->username)
+                ->getQuery();
+            try {
+                $adminuser = $adminuserQ->getSingleResult();
+            } catch (NoResultException $e) {
+                throw new \RuntimeException(
+                    "An admin user with username '$this->username' does not exists, 
+                    please use an existing user or
+                     set 'eddmash_permission.fetch_admin_callback' ");
+
+            } catch (NonUniqueResultException $e) {
+            }
+
+        }
+
         if (empty($adminuser)) {
-            return;
+            throw new \RuntimeException(
+                "An admin user is required, please set 'eddmash_permission.fetch_admin_callback' ");
         }
 
         $this->write("setting up permissions");
@@ -113,4 +158,5 @@ class Permissions
             echo $string . PHP_EOL;
         }
     }
+
 }

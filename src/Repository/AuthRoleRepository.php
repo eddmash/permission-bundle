@@ -2,10 +2,10 @@
 
 namespace Eddmash\PermissionBundle\Repository;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Eddmash\PermissionBundle\Entity\AuthRole;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @method AuthRole|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class AuthRoleRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, AuthRole::class);
     }
