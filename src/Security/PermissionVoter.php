@@ -97,7 +97,6 @@ class PermissionVoter extends Voter
 
             static::$perms[$user->getId()] = $perms ?? [];
         }
-        dump($user->getId(), static::$perms);
 
         return in_array($attribute, static::$perms[$user->getId()]);
 
